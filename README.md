@@ -17,6 +17,8 @@ Before you begin, ensure you have the following tools installed:
 1.  Authenticate with the gcloud CLI. This command will open a browser window for you to log in to your Google account.
 
     ```bash
+    gcloud services enable iam.googleapis.com iamcredentials.googleapis.com
+    
     gcloud auth application-default login --impersonate-service-account github-actions-terraform@multicloud-475408.iam.gserviceaccount.com
     ```
 
@@ -42,17 +44,16 @@ This will store your credentials in the default location (`~/.aws/credentials`),
 3.  Update the placeholder values with your specific settings for both GCP and AWS.
 
     ```terraform-vars
-    provision/terraform.tfvars
-    project_id                  = "your-gcp-project-id"
-    impersonate_service_account = "your-service-account@your-gcp-project-id.iam.gserviceaccount.com"
+    project_id                  = "multicloud-475408"
+    impersonate_service_account = "github-actions-terraform@multicloud-475408.iam.gserviceaccount.com"
     network_name                = "gcp-net"
-    subnet_regions              = ["asia-northeast1", "us-central1"] // Example regions
+    subnet_regions              = ["asia-northeast1", "asia-northeast1"]
     vpn_gwy_region              = "asia-northeast1"
     gcp_router_asn              = "64514"
-    aws_vpc_cidr                = "10.0.1.0/16"
+    aws_vpc_cidr                = "10.0.0.0/16"
     aws_router_asn              = "64515"
-    num_tunnels                 = 2
-    shared_secret               = "replace-with-a-strong-random-secret"
+    num_tunnels                 = 4
+    shared_secret               = "this_is_a_very_secure_and_random_string_hehe"
     ```
 
 ## Step 3: Run Terraform
