@@ -12,11 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Service account for the VM instance
+# Service account for the VM instance (optional)
 resource "google_service_account" "vm_sa" {
+  count = var.create_service_account ? 1 : 0
+
   account_id   = "${var.vm_name}-sa"
   display_name = "Service Account for ${var.vm_name}"
   description  = "Service account for GCP VM instance with VPN connectivity"
+}
+
+# Determine which service account to use
+locals {
+  service_account_email = var.create_service_account ? google_service_account.vm_sa[0].email : (
+    var.service_account_email != "" ? var.service_account_email : null
+  )
+  target_service_accounts = var.create_service_account ? [google_service_account.vm_sa[0].email] : []
 }
 
 # Firewall rule to allow IAP SSH access
@@ -31,9 +41,9 @@ resource "google_compute_firewall" "allow_iap_ssh" {
 
   # IAP IP range for SSH
   source_ranges = ["35.235.240.0/20"]
-  
-  target_service_accounts = [google_service_account.vm_sa.email]
-  
+
+  target_service_accounts = local.target_service_accounts
+
   description = "Allow SSH access from IAP"
 }
 
@@ -55,9 +65,9 @@ resource "google_compute_firewall" "allow_aws_traffic" {
   }
 
   source_ranges = [var.aws_vpc_cidr]
-  
-  target_service_accounts = [google_service_account.vm_sa.email]
-  
+
+  target_service_accounts = local.target_service_accounts
+
   description = "Allow traffic from AWS VPC through VPN tunnel"
 }
 
@@ -81,9 +91,9 @@ resource "google_compute_firewall" "allow_internal" {
   }
 
   source_ranges = ["10.10.0.0/16"]
-  
-  target_service_accounts = [google_service_account.vm_sa.email]
-  
+
+  target_service_accounts = local.target_service_accounts
+
   description = "Allow internal GCP VPC traffic"
 }
 
@@ -106,9 +116,12 @@ resource "google_compute_instance" "vm" {
     # No external IP - access via IAP only
   }
 
-  service_account {
-    email  = google_service_account.vm_sa.email
-    scopes = ["cloud-platform"]
+  dynamic "service_account" {
+    for_each = local.service_account_email != null ? [1] : []
+    content {
+      email  = local.service_account_email
+      scopes = ["cloud-platform"]
+    }
   }
 
   metadata = {

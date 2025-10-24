@@ -37,15 +37,16 @@ module "gcp-aws-ha-vpn" {
 module "vm" {
   source = "../modules/vm"
 
-  vm_name      = var.vm_name
-  machine_type = var.vm_machine_type
-  zone         = var.vm_zone
-  image        = var.vm_image
-  network      = module.network.gcp_network
-  subnetwork   = module.network.gcp_subnets[0]
-  aws_vpc_cidr = var.aws_vpc_cidr
-  environment  = var.environment
-  ssh_keys     = var.ssh_public_keys
+  vm_name                = var.vm_name
+  machine_type           = var.vm_machine_type
+  zone                   = var.vm_zone
+  image                  = var.vm_image
+  network                = module.network.gcp_network
+  subnetwork             = module.network.gcp_subnets[0]
+  aws_vpc_cidr           = var.aws_vpc_cidr
+  environment            = var.environment
+  ssh_keys               = var.ssh_public_keys
+  create_service_account = false
 
   depends_on = [module.network]
 }

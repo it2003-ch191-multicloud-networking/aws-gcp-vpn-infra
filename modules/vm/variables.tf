@@ -73,3 +73,15 @@ variable "ssh_keys" {
   description = "List of SSH public keys to add to the VM (format: 'username:ssh-rsa AAAA... user@host')"
   default     = []
 }
+
+variable "create_service_account" {
+  description = "Whether to create a new service account or use existing one"
+  type        = bool
+  default     = false
+}
+
+variable "service_account_email" {
+  description = "Existing service account email to use (if create_service_account is false)"
+  type        = string
+  default     = ""
+}

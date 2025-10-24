@@ -18,7 +18,7 @@ resource "aws_key_pair" "ec2_key" {
 
   key_name   = "${var.instance_name}-key"
   public_key = var.ssh_public_keys[0] # AWS key pair only supports one key
-  
+
   tags = {
     Name        = "${var.instance_name}-key"
     Environment = var.environment
@@ -47,12 +47,14 @@ data "aws_ami" "ubuntu" {
 }
 
 # Security group for EC2 instance
+// ...existing code...
+
 resource "aws_security_group" "ec2_sg" {
   name        = "${var.instance_name}-sg"
-  description = "Security group for ${var.instance_name} EC2 instance"
+  description = "Security group for EC2 instance"
   vpc_id      = var.vpc_id
 
-  # Allow SSH from anywhere (for testing)
+  # Allow SSH from anywhere (or restrict to your IP)
   ingress {
     description = "SSH from anywhere"
     from_port   = 22
@@ -70,15 +72,16 @@ resource "aws_security_group" "ec2_sg" {
     cidr_blocks = [var.gcp_vpc_cidr]
   }
 
-  # Allow all traffic from GCP VPC
+  # Allow all TCP traffic from GCP VPC
   ingress {
-    description = "All traffic from GCP VPC"
+    description = "All TCP from GCP VPC"
     from_port   = 0
     to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = [var.gcp_vpc_cidr]
   }
 
+  # Allow all UDP traffic from GCP VPC
   ingress {
     description = "All UDP from GCP VPC"
     from_port   = 0
@@ -87,12 +90,30 @@ resource "aws_security_group" "ec2_sg" {
     cidr_blocks = [var.gcp_vpc_cidr]
   }
 
-  # Allow all traffic within AWS VPC
+  # Allow ICMP from AWS VPC
   ingress {
-    description = "All traffic from AWS VPC"
+    description = "ICMP from AWS VPC"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = [var.aws_vpc_cidr]
+  }
+
+  # Allow all TCP traffic from AWS VPC
+  ingress {
+    description = "All TCP from AWS VPC"
     from_port   = 0
     to_port     = 65535
-    protocol    = "-1"
+    protocol    = "tcp"
+    cidr_blocks = [var.aws_vpc_cidr]
+  }
+
+  # Allow all UDP traffic from AWS VPC
+  ingress {
+    description = "All UDP from AWS VPC"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "udp"
     cidr_blocks = [var.aws_vpc_cidr]
   }
 
@@ -111,15 +132,16 @@ resource "aws_security_group" "ec2_sg" {
   }
 }
 
+
 # EC2 Instance
 resource "aws_instance" "ec2" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   subnet_id     = var.subnet_id
   key_name      = length(var.ssh_public_keys) > 0 ? aws_key_pair.ec2_key[0].key_name : var.key_name
-  
+
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-  
+
   # Enable public IP for SSH access (optional)
   associate_public_ip_address = var.enable_public_ip
 

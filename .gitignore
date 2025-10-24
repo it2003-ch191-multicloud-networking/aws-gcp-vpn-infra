@@ -1,5 +1,5 @@
-*.tfvars
-*.tfvars.json
+# *.tfvars
+# *.tfvars.json
 
 # .tfstate files
 # These files are used to store the state of your infrastructure.
@@ -28,3 +28,6 @@ override.tf.json
 # CLI configuration files
 .terraformrc
 terraform.rc
+
+# Terraform lock file
+.terraform.lock.hcl

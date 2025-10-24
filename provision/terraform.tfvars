@@ -20,7 +20,7 @@ environment     = "production"
 ec2_instance_name    = "test-aws-vm"
 ec2_instance_type    = "t3.micro"
 ec2_enable_public_ip = true
-ec2_key_name         = null  # Set to your AWS key pair name if you want SSH access
+ec2_key_name         = null # Set to your AWS key pair name if you want SSH access
 
 # SSH Keys (applied to both GCP VM and AWS EC2)
 ssh_public_keys = [

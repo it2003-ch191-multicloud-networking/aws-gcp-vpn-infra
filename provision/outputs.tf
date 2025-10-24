@@ -83,7 +83,7 @@ output "ec2_ssh_command" {
 # Connection Information
 output "connection_info" {
   description = "Information for connecting and testing the VPN setup"
-  value = <<-EOT
+  value       = <<-EOT
     
     =================================================================
     GCP to AWS VPN Connection Setup Complete

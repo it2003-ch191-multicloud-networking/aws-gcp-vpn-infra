@@ -33,4 +33,10 @@ provider "google" {
   request_timeout = "60s"
 }
 
-provider "aws" {}
+provider "aws" {
+  region = "ap-southeast-1"
+}
+
+provider "awscc" {
+  region = "ap-southeast-1"
+}
