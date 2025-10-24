@@ -169,7 +169,7 @@ vm_zone                     = "asia-northeast1-a"
 vm_image                    = "ubuntu-2404-noble-amd64-v20251014"
 
 # EC2 Configuration
-ec2_instance_name           = "test-aws-vm"
+ec2_instance_name           = "bastion-vm"
 ec2_instance_type           = "t3.micro"
 ec2_enable_public_ip        = true
 
@@ -389,6 +389,37 @@ terraform plan -out=tfplan
 terraform apply tfplan
 ```
 
+### Create VM and EC2
+
+The VM and EC2 instances are created automatically when you run `terraform apply`. However, if you need to recreate them or manage them separately:
+
+### Recreate Both Instances
+
+```bash
+# Destroy both instances
+terraform destroy -target=module.vm -target=module.ec2
+
+# Recreate them
+terraform apply -target=module.vm -target=module.ec2
+```
+
+### Force Recreation (without destroying first)
+
+```bash
+# Taint and recreate GCP VM
+terraform taint module.vm.google_compute_instance.vm
+terraform apply
+
+# Taint and recreate AWS EC2
+terraform taint module.ec2.aws_instance.ec2
+terraform apply
+
+# Taint both
+terraform taint module.vm.google_compute_instance.vm
+terraform taint module.ec2.aws_instance.ec2
+terraform apply
+```
+
 ### Add New SSH Keys
 
 Edit `terraform.tfvars`:
@@ -594,8 +625,7 @@ terraform destroy
 
 **Destroy only VMs:**
 ```bash
-terraform destroy -target=module.vm
-terraform destroy -target=module.ec2
+terraform destroy -target=module.vm -target=module.ec2
 ```
 
 **Destroy only VPN:**

@@ -17,7 +17,7 @@ vm_image        = "ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20251014"
 environment     = "production"
 
 # EC2 Configuration
-ec2_instance_name    = "test-aws-vm"
+ec2_instance_name    = "bastion-vm"
 ec2_instance_type    = "t3.micro"
 ec2_enable_public_ip = false  # Disabled - access via VPN from GCP only
 ec2_key_name         = null # Set to your AWS key pair name if you want SSH access

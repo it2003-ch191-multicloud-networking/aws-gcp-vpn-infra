@@ -48,7 +48,7 @@ This project establishes a high-availability VPN connection between Google Cloud
 
 | Component | GCP VM | AWS EC2 |
 |-----------|--------|---------|
-| **Name** | test-gcp-vm | test-aws-vm |
+| **Name** | test-gcp-vm | bastion-vm |
 | **Size** | e2-small (2 vCPU, 2 GB) | t3.micro (1 vCPU, 1 GB) |
 | **OS** | Ubuntu 24.04 LTS | Ubuntu 24.04 LTS |
 | **Private IP** | 10.10.0.2 | 10.0.1.226 |

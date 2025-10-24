@@ -15,7 +15,7 @@ cd "$(dirname "$0")/../provision"
 GCP_VM_IP=$(terraform output -raw vm_internal_ip 2>/dev/null || echo "10.10.0.2")
 EC2_PRIVATE_IP=$(terraform output -raw ec2_private_ip 2>/dev/null || echo "10.0.1.226")
 EC2_PUBLIC_IP=$(terraform output -raw ec2_public_ip 2>/dev/null || echo "")
-EC2_NAME=$(terraform output -raw ec2_instance_name 2>/dev/null || echo "test-aws-vm")
+EC2_NAME=$(terraform output -raw ec2_instance_name 2>/dev/null || echo "bastion-vm")
 cd - > /dev/null
 
 echo "Source: AWS EC2 ($EC2_NAME)"
