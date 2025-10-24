@@ -62,3 +62,65 @@ variable "num_tunnels" {
     Total number of VPN tunnels. This needs to be in multiples of 2.
   EOF
 }
+
+# VM Configuration Variables
+variable "vm_name" {
+  type        = string
+  description = "Name of the GCP VM instance"
+  default     = "gcp-vm"
+}
+
+variable "vm_machine_type" {
+  type        = string
+  description = "Machine type for the VM instance"
+  default     = "e2-small"
+}
+
+variable "vm_zone" {
+  type        = string
+  description = "Zone where the VM will be created"
+}
+
+variable "vm_image" {
+  type        = string
+  description = "Boot disk image for the VM"
+  default     = "ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20251014"
+}
+
+variable "environment" {
+  type        = string
+  description = "Environment label for resources"
+  default     = "production"
+}
+
+# EC2 Configuration Variables
+variable "ec2_instance_name" {
+  type        = string
+  description = "Name of the EC2 instance"
+  default     = "aws-ec2"
+}
+
+variable "ec2_instance_type" {
+  type        = string
+  description = "EC2 instance type"
+  default     = "t3.micro"
+}
+
+variable "ec2_enable_public_ip" {
+  type        = bool
+  description = "Enable public IP for EC2 instance"
+  default     = true
+}
+
+variable "ec2_key_name" {
+  type        = string
+  description = "AWS key pair name for EC2 SSH access (optional, ignored if ssh_public_keys is provided)"
+  default     = null
+}
+
+# SSH Keys Configuration
+variable "ssh_public_keys" {
+  type        = list(string)
+  description = "List of SSH public keys to add to both GCP VM and AWS EC2"
+  default     = []
+}

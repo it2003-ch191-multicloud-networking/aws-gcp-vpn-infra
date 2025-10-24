@@ -33,3 +33,36 @@ module "gcp-aws-ha-vpn" {
   aws_vpc_id          = module.network.aws_vpc_id
   gcp_network         = module.network.gcp_network
 }
+
+module "vm" {
+  source = "../modules/vm"
+
+  vm_name      = var.vm_name
+  machine_type = var.vm_machine_type
+  zone         = var.vm_zone
+  image        = var.vm_image
+  network      = module.network.gcp_network
+  subnetwork   = module.network.gcp_subnets[0]
+  aws_vpc_cidr = var.aws_vpc_cidr
+  environment  = var.environment
+  ssh_keys     = var.ssh_public_keys
+
+  depends_on = [module.network]
+}
+
+module "ec2" {
+  source = "../modules/ec2"
+
+  instance_name    = var.ec2_instance_name
+  instance_type    = var.ec2_instance_type
+  vpc_id           = module.network.aws_vpc_id
+  subnet_id        = module.network.aws_private_subnets[0]
+  gcp_vpc_cidr     = "10.10.0.0/16"
+  aws_vpc_cidr     = var.aws_vpc_cidr
+  enable_public_ip = var.ec2_enable_public_ip
+  key_name         = var.ec2_key_name
+  environment      = var.environment
+  ssh_public_keys  = [for key in var.ssh_public_keys : replace(key, "/^[^:]+:/", "")]
+
+  depends_on = [module.network]
+}
