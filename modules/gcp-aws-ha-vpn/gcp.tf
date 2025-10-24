@@ -127,3 +127,18 @@ resource "google_compute_router_peer" "peer" {
   router          = google_compute_router.router.name
   region          = var.vpn_gwy_region
 }
+
+# Static route to AWS VPC CIDR via VPN tunnel
+# This ensures GCP VMs can reach AWS resources through the VPN
+resource "google_compute_route" "to_aws" {
+  name             = "${var.prefix}-route-to-aws"
+  network          = var.gcp_network
+  dest_range       = var.aws_vpc_cidr
+  next_hop_vpn_tunnel = google_compute_vpn_tunnel.tunnel[0].self_link
+  priority         = 100
+
+  depends_on = [
+    google_compute_vpn_tunnel.tunnel,
+    google_compute_router_peer.peer
+  ]
+}

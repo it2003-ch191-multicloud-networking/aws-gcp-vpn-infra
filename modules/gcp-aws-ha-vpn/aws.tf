@@ -65,3 +65,25 @@ resource "aws_vpn_connection" "vpn_conn" {
     Name = "${var.prefix}-vpn-connn"
   }
 }
+
+# Get all route tables in the VPC
+data "aws_route_tables" "vpc_route_tables" {
+  vpc_id = var.aws_vpc_id
+}
+
+# Add route to GCP CIDR in all route tables (except main/default)
+resource "aws_route" "to_gcp" {
+  for_each = {
+    for rt_id in data.aws_route_tables.vpc_route_tables.ids :
+    rt_id => rt_id
+  }
+
+  route_table_id         = each.value
+  destination_cidr_block = "10.10.0.0/16"
+  transit_gateway_id     = aws_ec2_transit_gateway.tgw.id
+
+  depends_on = [
+    awscc_ec2_transit_gateway_attachment.tgw_attachment,
+    aws_vpn_connection.vpn_conn
+  ]
+}
