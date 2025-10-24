@@ -23,3 +23,19 @@ output "aws_vpc_id" {
 output "gcp_network" {
   value = google_compute_network.net.name
 }
+
+output "gcp_network_id" {
+  value = google_compute_network.net.id
+}
+
+output "gcp_subnets" {
+  value = google_compute_subnetwork.subnet[*].self_link
+}
+
+output "gcp_subnet_names" {
+  value = google_compute_subnetwork.subnet[*].name
+}
+
+output "gcp_subnet_regions" {
+  value = google_compute_subnetwork.subnet[*].region
+}
