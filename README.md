@@ -1,90 +1,74 @@
-# Guide
+# Multi-Cloud networking between GCP and AWS
 
-This guide provides the steps to provision the multi-cloud network infrastructure using Terraform.
+High-availability VPN network infrastructure connecting Google Cloud Platform and Amazon Web Services using Terraform.
 
-## Prerequisites
+## Architecture
 
-Before you begin, ensure you have the following tools installed:
-
-1.  [Terraform CLI](https://learn.hashicorp.com/tutorials/terraform/install-cli) (version 1.0 or later)
-2.  [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) (`gcloud`)
-3.  [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-
-## Step 1: Configure Cloud Provider Credentials
-
-### Google Cloud Platform (GCP)
-
-1.  Authenticate with the gcloud CLI. This command will open a browser window for you to log in to your Google account.
-
-    ```bash
-    gcloud services enable iam.googleapis.com iamcredentials.googleapis.com
-    
-    gcloud auth application-default login --impersonate-service-account github-actions-terraform@multicloud-475408.iam.gserviceaccount.com
-    ```
-
-2.  Ensure the user account you authenticated with has permissions to impersonate the service account defined in your `.tfvars` file. Specifically, it needs the "Service Account Token Creator" (`roles/iam.serviceAccountTokenCreator`) role.
-
-### Amazon Web Services (AWS)
-
-Configure your AWS credentials. The simplest method is to use the `aws configure` command and follow the prompts.
-
-```bash
-aws configure
+```
+┌─────────────────────────┐        VPN Tunnels        ┌─────────────────────────┐
+│   GCP (Tokyo)           │◄────────────────────────►│   AWS (Singapore)       │
+│   10.10.0.0/16          │    4 IPsec + BGP         │   10.0.0.0/16           │
+│   ASN: 64514            │                          │   ASN: 64515            │
+└─────────────────────────┘                          └─────────────────────────┘
 ```
 
-This will store your credentials in the default location (`~/.aws/credentials`), which Terraform will automatically use.
+**Key Components:**
+- **GCP**: HA VPN Gateway, Cloud Router, Compute Engine VM (10.10.0.2)
+- **AWS**: Transit Gateway, VPN Connections, EC2 Instance (10.0.1.226)
+- **VPN**: 4 redundant IPsec tunnels with BGP dynamic routing
+- **Security**: Firewall rules, security groups, encrypted traffic
 
-## Step 2: Configure Terraform Variables
-
-1.  Navigate to the `provision` directory:
-    ```bash
-    cd provision
-    ```
-2.  Open the `terraform.tfvars` file.
-3.  Update the placeholder values with your specific settings for both GCP and AWS.
-
-    ```terraform-vars
-    project_id                  = "multicloud-475408"
-    impersonate_service_account = "github-actions-terraform@multicloud-475408.iam.gserviceaccount.com"
-    network_name                = "gcp-net"
-    subnet_regions              = ["asia-northeast1", "asia-northeast1"]
-    vpn_gwy_region              = "asia-northeast1"
-    gcp_router_asn              = "64514"
-    aws_vpc_cidr                = "10.0.0.0/16"
-    aws_router_asn              = "64515"
-    num_tunnels                 = 4
-    shared_secret               = "this_is_a_very_secure_and_random_string_hehe"
-    ```
-
-## Step 3: Run Terraform
-
-From within the `provision` directory, execute the following commands:
-
-1.  **Initialize Terraform:**
-    This command downloads the necessary provider plugins.
-
-    ```bash
-    terraform init
-    ```
-
-2.  **Create an Execution Plan:**
-    This command shows you what resources Terraform will create, modify, or destroy. Review the plan carefully.
-
-    ```bash
-    terraform plan
-    ```
-
-3.  **Apply the Configuration:**
-    This command provisions the infrastructure as defined in your configuration files. You will be prompted to confirm the action.
-
-    ```bash
-    terraform apply
-    ```
-
-## Step 4: Clean Up Resources
-
-To tear down all the resources created by this project, run the destroy command from the `provision` directory.
+## Quick Start
 
 ```bash
-terraform destroy
+cd provision
+terraform init
+terraform plan
+terraform apply
 ```
+
+**Test Connectivity:**
+```bash
+./scripts/demo.sh                # Interactive demo
+./scripts/test-connectivity.sh   # VPN status check
+./scripts/gcp2aws.sh             # Test GCP → AWS
+./scripts/aws2gcp.sh             # Test AWS → GCP
+```
+
+## Infrastructure Details
+
+| Component | GCP | AWS |
+|-----------|-----|-----|
+| **Region** | asia-northeast1 (Tokyo) | ap-southeast-1 (Singapore) |
+| **VPC CIDR** | 10.10.0.0/16 | 10.0.0.0/16 |
+| **VPN Gateway** | HA VPN (2 interfaces) | Transit Gateway |
+| **BGP ASN** | 64514 | 64515 |
+| **VM/Instance** | e2-small (10.10.0.2) | t3.micro (10.0.1.226) |
+| **OS** | Ubuntu 24.04 LTS | Ubuntu 24.04 LTS |
+
+## Requirements
+
+- **Terraform** >= 1.0
+- **Google Cloud SDK** (`gcloud`)
+- **AWS CLI** (version 2+)
+- **Credentials**: GCP service account, AWS IAM access
+
+## Documentation
+
+- **[GUIDE.md](GUIDE.md)** - Complete setup guide and troubleshooting
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed architecture with diagrams
+
+## Estimated Costs
+
+| Service | Monthly Cost |
+|---------|--------------|
+| GCP HA VPN Gateway | ~$150 |
+| GCP VM (e2-small) | ~$15 |
+| AWS Transit Gateway | ~$50 |
+| AWS EC2 (t3.micro) | ~$10 |
+| **Total** | **~$225** |
+
+---
+
+**For detailed setup instructions, see [GUIDE.md](GUIDE.md)**
+
