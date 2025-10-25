@@ -19,3 +19,43 @@ variable "network_name" {
 variable "subnet_regions" {
   type = list(string)
 }
+
+variable "gcp_vpc_cidr" {
+  type = string
+  default = "10.10.0.0/16"
+}
+
+variable "aws_vpc_cidr" {
+  type = string
+  default = "10.0.0.0/16"
+}
+
+variable "enable_nat_gateway" {
+  type = bool
+  default = true
+}
+
+variable "enable_vpn_gateway" {
+  type = bool
+  default = false
+}
+
+variable "aws_azs" {
+  type = list(string)
+  default = [ "ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c" ]
+}
+
+variable "aws_private_subnets" {
+  type = list(string)
+  default = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+}
+
+variable "aws_public_subnets" {
+  type = list(string)
+  default = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+}
+
+variable "aws_vpc_name" {
+  type = string
+  default = "aws-net"
+}

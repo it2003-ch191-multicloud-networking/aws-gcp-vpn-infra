@@ -25,6 +25,7 @@ module "gcp-aws-ha-vpn" {
   num_tunnels         = var.num_tunnels
   aws_router_asn      = var.aws_router_asn
   aws_vpc_cidr        = var.aws_vpc_cidr
+  gcp_vpc_cidr        = var.gcp_vpc_cidr
   gcp_router_asn      = var.gcp_router_asn
   project_id          = var.project_id
   vpn_gwy_region      = var.vpn_gwy_region
@@ -58,7 +59,7 @@ module "ec2" {
   instance_type    = var.ec2_instance_type
   vpc_id           = module.network.aws_vpc_id
   subnet_id        = module.network.aws_private_subnets[0]
-  gcp_vpc_cidr     = "10.10.0.0/16"
+  gcp_vpc_cidr     = var.gcp_vpc_cidr
   aws_vpc_cidr     = var.aws_vpc_cidr
   enable_public_ip = var.ec2_enable_public_ip
   key_name         = var.ec2_key_name

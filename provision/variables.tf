@@ -44,6 +44,11 @@ variable "aws_vpc_cidr" {
   type = string
 }
 
+variable "gcp_vpc_cidr" {
+  type = string
+}
+
+
 variable "shared_secret" {
   type = string
 }

@@ -85,3 +85,21 @@ variable "service_account_email" {
   type        = string
   default     = ""
 }
+
+variable "gcp_vpc_cidr" {
+  type        = string
+  description = "GCP VPC CIDR for documentation and scripts"
+  default     = "10.10.0.0/16"
+}
+
+variable "enable_monitoring" {
+  type        = bool
+  description = "Enable Google Cloud Ops Agent for monitoring"
+  default     = false
+}
+
+variable "custom_commands" {
+  type        = string
+  description = "Custom shell commands to run during startup"
+  default     = ""
+}

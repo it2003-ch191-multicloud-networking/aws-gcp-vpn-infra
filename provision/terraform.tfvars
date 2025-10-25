@@ -4,6 +4,7 @@ network_name                = "gcp-net"
 subnet_regions              = ["asia-northeast1", "asia-northeast1"]
 vpn_gwy_region              = "asia-northeast1"
 gcp_router_asn              = "64514"
+gcp_vpc_cidr                = "10.10.0.0/16"
 aws_vpc_cidr                = "10.0.0.0/16"
 aws_router_asn              = "64515"
 num_tunnels                 = 4
@@ -19,10 +20,10 @@ environment     = "production"
 # EC2 Configuration
 ec2_instance_name    = "bastion-vm"
 ec2_instance_type    = "t3.micro"
-ec2_enable_public_ip = false  # Disabled - access via VPN from GCP only
-ec2_key_name         = null # Set to your AWS key pair name if you want SSH access
+ec2_enable_public_ip = false # Disabled - access via VPN from GCP only
+ec2_key_name         = null  # Set to your AWS key pair name if you want SSH access
 
-# SSH Keys (applied to both GCP VM and AWS EC2)
+# SSH Keys
 ssh_public_keys = [
   "truongtbn:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHc1s1f6fcKib1MkFW02GJm6QFJvDu8W7VsbXhchoVSC truongtbn"
   # Add more keys in format: "username:ssh-rsa AAAA... user@host" for GCP

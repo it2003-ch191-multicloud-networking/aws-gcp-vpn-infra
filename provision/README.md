@@ -23,6 +23,7 @@
 | --------------------------- | --------------------------- | -------------- | ------- | :------: |
 | aws_router_asn              | n/a                         | `string`       | n/a     |   yes    |
 | aws_vpc_cidr                | n/a                         | `string`       | n/a     |   yes    |
+| gcp_vpc_cidr                | n/a                         | `string`       | n/a     |   yes    |
 | gcp_router_asn              | n/a                         | `string`       | n/a     |   yes    |
 | impersonate_service_account | n/a                         | `string`       | n/a     |   yes    |
 | network_name                | n/a                         | `string`       | n/a     |   yes    |
