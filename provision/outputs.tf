@@ -105,7 +105,8 @@ output "connection_info" {
     ${module.vm.iap_ssh_command}
     
     To connect to the AWS EC2 instance:
-    ${module.ec2.ssh_command}
+    1. ${module.ec2.ssh_command}
+    2. ${module.ec2.eic_ssh_command}
     
     AWS VPC CIDR: ${var.aws_vpc_cidr}
     GCP VPC CIDR: 10.10.0.0/16
@@ -118,7 +119,9 @@ output "connection_info" {
     3. Check routes: ip route show
     
     From AWS EC2 to GCP:
-    1. SSH into EC2: ${module.ec2.ssh_command}
+    1. Connect to AWS EC2:
+      - SSH into EC2: ${module.ec2.ssh_command}
+      - Or use EIC Endpoint: ${module.ec2.eic_ssh_command}
     2. Ping GCP VM: ping ${module.vm.internal_ip}
     3. Check routes: ip route show
     

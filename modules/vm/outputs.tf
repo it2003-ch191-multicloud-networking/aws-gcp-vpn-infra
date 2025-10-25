@@ -44,5 +44,5 @@ output "service_account_email" {
 
 output "iap_ssh_command" {
   description = "Command to SSH into the instance via IAP"
-  value       = "gcloud compute ssh ${google_compute_instance.vm.name} --zone=${google_compute_instance.vm.zone} --tunnel-through-iap"
+  value       = "gcloud compute ssh ${google_compute_instance.vm.name} --zone=${google_compute_instance.vm.zone} --tunnel-through-iap --project=${google_compute_instance.vm.project}"
 }
