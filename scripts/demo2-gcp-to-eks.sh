@@ -53,17 +53,20 @@ aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME --alias demo
 
 # Get first running pod IP
 echo "Getting EKS pod information..."
-kubectl get pods -n default -o wide
+POD_COUNT=$(kubectl get pods -n default --no-headers 2>/dev/null | wc -l)
 
-POD_IP=$(kubectl get pods -n default -o jsonpath='{.items[0].status.podIP}')
-POD_NAME=$(kubectl get pods -n default -o jsonpath='{.items[0].metadata.name}')
-
-if [ -z "$POD_IP" ]; then
-    echo "❌ No pods found, deploying test nginx..."
-    kubectl run nginx-test --image=nginx:latest --labels="app=nginx-test"
-    kubectl wait --for=condition=ready pod/nginx-test --timeout=60s
-    POD_IP=$(kubectl get pod nginx-test -o jsonpath='{.status.podIP}')
+if [ "$POD_COUNT" -eq 0 ]; then
+    echo "No pods found in default namespace"
+    echo "Deploying test nginx pod..."
+    kubectl run nginx-test --image=nginx:latest --port=80 --labels="app=nginx-test"
+    echo "Waiting for pod to be ready..."
+    kubectl wait --for=condition=ready pod/nginx-test --timeout=90s -n default
+    POD_IP=$(kubectl get pod nginx-test -n default -o jsonpath='{.status.podIP}')
     POD_NAME="nginx-test"
+else
+    kubectl get pods -n default -o wide
+    POD_IP=$(kubectl get pods -n default -o jsonpath='{.items[0].status.podIP}')
+    POD_NAME=$(kubectl get pods -n default -o jsonpath='{.items[0].metadata.name}')
 fi
 
 echo "✅ Target: $POD_NAME ($POD_IP)"
