@@ -12,6 +12,18 @@ resource "aws_security_group" "ec2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow SSH from EIC Endpoint (if enabled)
+  dynamic "ingress" {
+    for_each = var.aws_create_vpc_endpoints ? [1] : []
+    content {
+      description     = "SSH from EC2 Instance Connect Endpoint"
+      from_port       = 22
+      to_port         = 22
+      protocol        = "tcp"
+      security_groups = [aws_security_group.eic_endpoint_sg[0].id]
+    }
+  }
+
   # Allow ICMP from GCP VPC
   ingress {
     description = "ICMP from GCP VPC"

@@ -112,11 +112,4 @@ graph LR
         TGW -->|static route<br/>10.10.0.0/16| AVPC
         AVPC -->|traffic to<br/>10.10.x.x| AEC2
     end
-    
-    style T1 fill:#87CEEB
-    style T2 fill:#87CEEB
-    style T3 fill:#87CEEB
-    style T4 fill:#87CEEB
-    style GROUTER fill:#90EE90
-    style TGW fill:#FFD700
 ```

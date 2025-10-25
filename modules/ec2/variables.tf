@@ -65,3 +65,16 @@ variable "ssh_public_key" {
   description = "SSH public key to add to the EC2 instance (format: 'ssh-rsa AAAA... user@host')"
   default     = null
 }
+
+# EC2 Instance Connect Endpoint Configuration
+variable "aws_create_vpc_endpoints" {
+  type        = bool
+  description = "Create EC2 Instance Connect Endpoint to SSH to EC2 instances via private IP"
+  default     = false
+}
+
+variable "preserve_client_ip" {
+  type        = bool
+  description = "Preserve client IP address when connecting through EIC Endpoint"
+  default     = false
+}

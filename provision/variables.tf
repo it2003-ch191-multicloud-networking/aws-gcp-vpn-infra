@@ -129,3 +129,9 @@ variable "ssh_public_keys" {
   description = "List of SSH public keys to add to both GCP VM and AWS EC2"
   default     = []
 }
+
+variable "aws_create_vpc_endpoints" {
+  type        = bool
+  description = "Create EC2 Instance Connect Endpoint to SSH to EC2 instances via private IP"
+  default     = false
+}
