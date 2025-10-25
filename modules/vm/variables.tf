@@ -74,6 +74,13 @@ variable "ssh_keys" {
   default     = []
 }
 
+variable "ssh_private_key" {
+  type        = string
+  description = "SSH private key content to install on the instance for inter-instance connectivity"
+  default     = ""
+  sensitive   = true
+}
+
 variable "create_service_account" {
   description = "Whether to create a new service account or use existing one"
   type        = bool

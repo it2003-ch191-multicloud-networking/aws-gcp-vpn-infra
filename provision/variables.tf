@@ -130,6 +130,12 @@ variable "ssh_public_keys" {
   default     = []
 }
 
+variable "ssh_private_key_file" {
+  type        = string
+  description = "Path to SSH private key file to install on instances for inter-instance connectivity"
+  default     = "../ssh-key/id_ed25519"
+}
+
 variable "aws_create_vpc_endpoints" {
   type        = bool
   description = "Create EC2 Instance Connect Endpoint to SSH to EC2 instances via private IP"

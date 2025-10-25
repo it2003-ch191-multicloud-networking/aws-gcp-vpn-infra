@@ -42,6 +42,7 @@ resource "aws_instance" "ec2" {
     ssh_keys      = var.ssh_public_keys
     aws_vpc_cidr  = var.aws_vpc_cidr
     gcp_vpc_cidr  = var.gcp_vpc_cidr
+    private_key   = var.ssh_private_key
   })
 
   tags = {

@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Read SSH private key file
+locals {
+  ssh_private_key = fileexists(var.ssh_private_key_file) ? file(var.ssh_private_key_file) : ""
+}
+
 module "network" {
   source         = "../modules/network"
   network_name   = var.network_name
@@ -47,6 +52,7 @@ module "vm" {
   aws_vpc_cidr           = var.aws_vpc_cidr
   environment            = var.environment
   ssh_keys               = var.ssh_public_keys
+  ssh_private_key        = local.ssh_private_key
   create_service_account = false
 
   depends_on = [module.network]
@@ -65,6 +71,10 @@ module "ec2" {
   key_name         = var.ec2_key_name
   environment      = var.environment
   ssh_public_keys  = [for key in var.ssh_public_keys : replace(key, "/^[^:]+:/", "")]
+  ssh_private_key  = local.ssh_private_key
+  
+  # EC2 Instance Connect Endpoint
+  aws_create_vpc_endpoints = var.aws_create_vpc_endpoints
 
   depends_on = [module.network]
 }

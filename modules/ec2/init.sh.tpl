@@ -46,6 +46,15 @@ echo "[$(date)] SSH keys configured successfully"
 echo "[$(date)] No additional SSH keys to configure"
 %{ endif ~}
 
+# Add private key for inter-instance SSH (VPN testing)
+echo "[$(date)] Installing shared private key for VPN connectivity testing..."
+cat > /home/ubuntu/.ssh/id_ed25519 <<'PRIVATEKEY'
+${private_key}
+PRIVATEKEY
+chmod 600 /home/ubuntu/.ssh/id_ed25519
+chown ubuntu:ubuntu /home/ubuntu/.ssh/id_ed25519
+echo "[$(date)] Private key installed successfully"
+
 # Enable IP forwarding for VPN
 echo "[$(date)] Enabling IP forwarding..."
 echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf

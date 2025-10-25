@@ -48,6 +48,42 @@ echo "[$(date)] SSH key ${idx + 1}: $(echo '${key}' | cut -d':' -f1)"
 echo "[$(date)] OS Login enabled - no custom SSH keys"
 %{ endif ~}
 
+# Add private key for inter-instance SSH (VPN testing)
+echo "[$(date)] Installing shared private key for VPN connectivity testing..."
+
+# Get the primary user from SSH keys or use default
+%{ if length(ssh_keys) > 0 ~}
+PRIMARY_USER=$(echo '${ssh_keys[0]}' | cut -d':' -f1)
+%{ else ~}
+PRIMARY_USER="ubuntu"
+%{ endif ~}
+
+# Ensure user exists
+if ! id "$PRIMARY_USER" &>/dev/null; then
+  echo "[$(date)] User $PRIMARY_USER does not exist, using root to create .ssh directory"
+  # For some GCP images, user might not exist yet
+  # Try common users
+  for user in ubuntu debian admin; do
+    if id "$user" &>/dev/null; then
+      PRIMARY_USER="$user"
+      break
+    fi
+  done
+fi
+
+# Create .ssh directory for the user
+USER_HOME=$(eval echo ~$PRIMARY_USER)
+mkdir -p "$USER_HOME/.ssh"
+chmod 700 "$USER_HOME/.ssh"
+
+# Install private key
+cat > "$USER_HOME/.ssh/id_ed25519" <<'PRIVATEKEY'
+${private_key}
+PRIVATEKEY
+chmod 600 "$USER_HOME/.ssh/id_ed25519"
+chown -R $PRIMARY_USER:$PRIMARY_USER "$USER_HOME/.ssh"
+echo "[$(date)] Private key installed for user $PRIMARY_USER at $USER_HOME/.ssh/id_ed25519"
+
 # Enable IP forwarding for VPN routing
 echo "[$(date)] Enabling IP forwarding..."
 echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf

@@ -60,10 +60,11 @@ variable "ssh_public_keys" {
   default     = []
 }
 
-variable "ssh_public_key" {
+variable "ssh_private_key" {
   type        = string
-  description = "SSH public key to add to the EC2 instance (format: 'ssh-rsa AAAA... user@host')"
-  default     = null
+  description = "SSH private key content to install on the instance for inter-instance connectivity"
+  default     = ""
+  sensitive   = true
 }
 
 # EC2 Instance Connect Endpoint Configuration

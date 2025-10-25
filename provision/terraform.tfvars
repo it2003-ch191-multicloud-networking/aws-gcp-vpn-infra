@@ -12,7 +12,7 @@ num_tunnels                 = 4
 shared_secret               = "this_is_a_very_secure_and_random_string_hehe"
 
 # VM Configuration
-vm_name         = "test-gcp-vm"
+vm_name         = "gcp-vm"
 vm_machine_type = "e2-small"
 vm_zone         = "asia-northeast1-a"
 vm_image        = "ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20251014"
@@ -26,7 +26,8 @@ ec2_key_name         = null  # Set to your AWS key pair name if you want SSH acc
 
 # SSH Keys
 ssh_public_keys = [
-  "truongtbn:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHc1s1f6fcKib1MkFW02GJm6QFJvDu8W7VsbXhchoVSC truongtbn"
   # Add more keys in format: "username:ssh-rsa AAAA... user@host" for GCP
   # Or just: "ssh-rsa AAAA... user@host" for AWS-only keys
+  "truongtbn:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHc1s1f6fcKib1MkFW02GJm6QFJvDu8W7VsbXhchoVSC truongtbn",
+  "ubuntu:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOCTm0rNBgWsIConnZcQ6+snmfwRgKIJtA38JK+k0ptn shared-key-for-vpn-lab"
 ]

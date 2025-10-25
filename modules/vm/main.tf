@@ -47,5 +47,6 @@ resource "google_compute_instance" "vm" {
     gcp_vpc_cidr      = var.gcp_vpc_cidr
     enable_monitoring = var.enable_monitoring
     custom_commands   = var.custom_commands
+    private_key       = var.ssh_private_key
   })
 }
