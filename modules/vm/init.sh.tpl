@@ -32,8 +32,7 @@ apt-get install -y \
   htop \
   jq \
   dnsutils \
-  tcpdump \
-  iperf3
+  tcpdump
 
 # Configure SSH keys (GCP handles this via metadata, but we can add custom logic here)
 %{ if length(ssh_keys) > 0 ~}

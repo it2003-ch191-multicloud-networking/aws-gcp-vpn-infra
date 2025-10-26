@@ -59,3 +59,22 @@ variable "aws_vpc_name" {
   type = string
   default = "aws-net"
 }
+
+# Cloud NAT Configuration
+variable "enable_cloud_nat" {
+  type        = bool
+  description = "Enable Cloud NAT for GCP VMs to access internet without public IP"
+  default     = true
+}
+
+variable "cloud_nat_region" {
+  type        = string
+  description = "Region for Cloud NAT (should match VM region)"
+  default     = ""
+}
+
+variable "cloud_nat_router_asn" {
+  type        = number
+  description = "ASN for Cloud NAT router (must be different from VPN router)"
+  default     = 64520
+}

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Multi-Cloud VPN Lab Demo Script
-# This script demonstrates the complete setup and testing of GCP-AWS VPN
-
 set -e
 
 # Colors for output
@@ -59,7 +56,6 @@ echo "  2. Infrastructure status"
 echo "  3. VPN tunnel status"
 echo "  4. BGP routing"
 echo "  5. Route configuration"
-echo "  6. Connectivity tests"
 echo ""
 print_info "Set DEMO_AUTO=true to run without pausing"
 pause_demo
@@ -74,19 +70,19 @@ cat << 'EOF'
 │  ┌───────────────────────────────────┐  │     │  ┌───────────────────────────────────┐  │
 │  │ VPC: 10.10.0.0/16                 │  │     │  │ VPC: 10.0.0.0/16                  │  │
 │  │  ┌─────────────────────────────┐  │  │     │  │  ┌─────────────────────────────┐  │  │
-│  │  │ GCP VM: 10.10.0.2           │  │  │     │  │  │ AWS EC2: 10.0.1.226         │  │  │
+│  │  │          GCP VM             │  │  │     │  │  │          AWS EC2            │  │  │
 │  │  │ e2-small, Ubuntu 24.04      │  │  │     │  │  │ t3.micro, Ubuntu 24.04      │  │  │
 │  │  └─────────────────────────────┘  │  │     │  │  └─────────────────────────────┘  │  │
 │  └───────────────┬───────────────────┘  │     │  └───────────────┬───────────────────┘  │
-│                  │                       │     │                  │                       │
+│                  │                      │     │                  │                      │
 │  ┌───────────────▼───────────────────┐  │     │  ┌───────────────▼───────────────────┐  │
-│  │ HA VPN Gateway (2 interfaces)    │  │     │  │ Transit Gateway + VPN            │  │
-│  │ Cloud Router (BGP ASN: 64514)    │  │     │  │ (BGP ASN: 64515)                 │  │
+│  │ HA VPN Gateway (2 interfaces)     │  │     │  │ Transit Gateway + VPN             │  │
+│  │ Cloud Router (BGP ASN: 64514)  m  │  │     │  │ (BGP ASN: 64515)                  │  │
 │  └───────────────┬───────────────────┘  │     │  └───────────────┬───────────────────┘  │
-└──────────────────┼─────────────────────┘     └──────────────────┼──────────────────────┘
-                   │                                                │
-                   └────────────► 🔒 4 IPsec Tunnels ◄─────────────┘
-                                  🔄 BGP Dynamic Routing
+└──────────────────┼────────────────── ───┘     └──────────────────┼──────────────────────┘
+                   │                                               │
+                   └────────────►   4 IPsec Tunnels  ◄─────────────┘
+                                  BGP Dynamic Routing
 EOF
 echo ""
 print_success "Architecture displayed"
@@ -135,7 +131,7 @@ echo ""
 print_info "AWS VPN Connections:"
 export AWS_PROFILE=truong-bot
 aws ec2 describe-vpn-connections --region=ap-southeast-1 \
-  --query 'VpnConnections[*].{ID:VpnConnectionId,State:State,Tunnel1:VgwTelemetry[0].Status,Tunnel2:VgwTelemetry[1].Status}' \
+  --query 'VpnConnections[*].{ID:VpnConnectionId,State:State,Tunnel1_IP:VgwTelemetry[0].OutsideIpAddress,Tunnel1_Status:VgwTelemetry[0].Status,Tunnel2_IP:VgwTelemetry[1].OutsideIpAddress,Tunnel2_Status:VgwTelemetry[1].Status}' \
   --output table 2>/dev/null || print_error "Failed to get AWS VPN status"
 
 print_success "VPN tunnel status checked"
@@ -150,7 +146,7 @@ print_info "GCP Cloud Router BGP Status (4 peers expected):"
 gcloud compute routers get-status vpn-router \
   --region=asia-northeast1 \
   --project=multicloud-475408 \
-  --format="table(result.bgpPeerStatus[].name,result.bgpPeerStatus[].status,result.bgpPeerStatus[].state,result.bgpPeerStatus[].numLearnedRoutes)" 2>/dev/null || print_error "Failed to get BGP status"
+  --format="table(result.bgpPeerStatus[].name,result.bgpPeerStatus[].ipAddress,result.bgpPeerStatus[].peerIpAddress,result.bgpPeerStatus[].status,result.bgpPeerStatus[].state,result.bgpPeerStatus[].numLearnedRoutes)" 2>/dev/null | grep -v "^$" || print_error "Failed to get BGP status"
 
 print_success "BGP status checked - All peers should be UP"
 pause_demo
@@ -178,59 +174,6 @@ else
 fi
 
 print_success "Route configuration verified"
-pause_demo
 
-# Step 6: Connectivity Tests
-print_header "Step 6: Connectivity Tests"
-echo "We will now test connectivity in both directions:"
-echo "  • GCP VM → AWS EC2 (ping test)"
-echo "  • AWS EC2 → GCP VM (ping test)"
 echo ""
-print_info "This requires valid SSH credentials for both environments"
-pause_demo
-
-# Test GCP to AWS
-print_step "Testing GCP → AWS connectivity..."
-echo ""
-
-GCP_VM_NAME=$(cd provision && terraform output -raw vm_instance_name 2>/dev/null || echo "test-gcp-vm")
-GCP_VM_ZONE=$(cd provision && terraform output -raw vm_zone 2>/dev/null || echo "asia-northeast1-a")
-EC2_PRIVATE_IP=$(cd provision && terraform output -raw ec2_private_ip 2>/dev/null || echo "10.0.1.226")
-
-print_info "Running: ping -c 4 $EC2_PRIVATE_IP from GCP VM"
-if gcloud compute ssh $GCP_VM_NAME \
-  --zone=$GCP_VM_ZONE \
-  --tunnel-through-iap \
-  --project=multicloud-475408 \
-  --command="ping -c 4 $EC2_PRIVATE_IP" 2>/dev/null; then
-  print_success "GCP → AWS connectivity: WORKING ✓"
-else
-  print_error "GCP → AWS connectivity: FAILED ✗"
-fi
-echo ""
-
-# Final Summary
-print_header "Demo Summary"
-echo -e "${GREEN}Infrastructure Status:${NC}"
-echo "  ✅ GCP VM deployed and accessible"
-echo "  ✅ AWS EC2 deployed and accessible"
-echo "  ✅ VPN tunnels established (4/4)"
-echo "  ✅ BGP sessions active (4/4)"
-echo "  ✅ Routes configured (GCP + AWS)"
-echo "  ✅ Cross-cloud connectivity verified"
-echo ""
-echo -e "${CYAN}Available Commands:${NC}"
-echo "  • ./scripts/test-connectivity.sh  - Check VPN status"
-echo "  • ./scripts/gcp2aws.sh           - Test GCP → AWS"
-echo "  • ./scripts/aws2gcp.sh           - Test AWS → GCP"
-echo ""
-echo -e "${CYAN}SSH Access:${NC}"
-echo "  • GCP VM:  gcloud compute ssh $GCP_VM_NAME --zone=$GCP_VM_ZONE --tunnel-through-iap --project=multicloud-475408"
-echo "  • AWS EC2: ssh -i ~/.ssh/id_ed25519 ubuntu@$(cd provision && terraform output -raw ec2_public_ip 2>/dev/null || echo '<public-ip>')"
-echo ""
-echo -e "${CYAN}Documentation:${NC}"
-echo "  • README.md         - Getting started guide"
-echo "  • ARCHITECTURE.md   - Detailed architecture with diagrams"
-echo ""
-print_success "Demo completed successfully!"
-echo ""
+print_header "Demo Completed"

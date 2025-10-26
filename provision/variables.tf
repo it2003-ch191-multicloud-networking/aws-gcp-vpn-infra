@@ -141,3 +141,16 @@ variable "aws_create_vpc_endpoints" {
   description = "Create EC2 Instance Connect Endpoint to SSH to EC2 instances via private IP"
   default     = false
 }
+
+# Cloud NAT Configuration
+variable "enable_cloud_nat" {
+  type        = bool
+  description = "Enable Cloud NAT for GCP VMs to access internet without public IP"
+  default     = true
+}
+
+variable "cloud_nat_region" {
+  type        = string
+  description = "Region for Cloud NAT (defaults to vpn_gwy_region if not specified)"
+  default     = ""
+}

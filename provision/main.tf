@@ -21,6 +21,11 @@ module "network" {
   source         = "../modules/network"
   network_name   = var.network_name
   subnet_regions = var.subnet_regions
+  
+  # Cloud NAT Configuration
+  enable_cloud_nat      = var.enable_cloud_nat
+  cloud_nat_region      = var.cloud_nat_region != "" ? var.cloud_nat_region : var.vpn_gwy_region
+  cloud_nat_router_asn  = 64520  # Different from VPN router ASN (64514)
 }
 
 module "gcp-aws-ha-vpn" {

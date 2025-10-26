@@ -39,3 +39,19 @@ output "gcp_subnet_names" {
 output "gcp_subnet_regions" {
   value = google_compute_subnetwork.subnet[*].region
 }
+
+# Cloud NAT Outputs
+output "cloud_nat_enabled" {
+  description = "Whether Cloud NAT is enabled"
+  value       = var.enable_cloud_nat
+}
+
+output "cloud_nat_router_name" {
+  description = "Name of the Cloud NAT router"
+  value       = var.enable_cloud_nat ? google_compute_router.nat_router[0].name : null
+}
+
+output "cloud_nat_gateway_name" {
+  description = "Name of the Cloud NAT gateway"
+  value       = var.enable_cloud_nat ? google_compute_router_nat.nat_gateway[0].name : null
+}
