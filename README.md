@@ -27,14 +27,6 @@ terraform plan
 terraform apply
 ```
 
-**Test Connectivity:**
-```bash
-./scripts/demo.sh                # Interactive demo
-./scripts/test-connectivity.sh   # VPN status check
-./scripts/gcp2aws.sh             # Test GCP → AWS
-./scripts/aws2gcp.sh             # Test AWS → GCP
-```
-
 ## Infrastructure Details
 
 | Component | GCP | AWS |
