@@ -25,7 +25,7 @@ module "network" {
   # Cloud NAT Configuration
   enable_cloud_nat      = var.enable_cloud_nat
   cloud_nat_region      = var.cloud_nat_region != "" ? var.cloud_nat_region : var.vpn_gwy_region
-  cloud_nat_router_asn  = 64520  # Different from VPN router ASN (64514)
+  cloud_nat_router_asn  = 65520
 }
 
 module "gcp-aws-vpn" {
@@ -42,6 +42,7 @@ module "gcp-aws-vpn" {
   shared_secret       = var.shared_secret
   aws_private_subnets = module.network.aws_private_subnets
   aws_vpc_id          = module.network.aws_vpc_id
+  aws_route_table_ids = module.network.aws_private_route_table_ids
   gcp_network         = module.network.gcp_network
 }
 

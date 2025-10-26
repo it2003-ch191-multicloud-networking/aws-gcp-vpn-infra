@@ -9,7 +9,7 @@ aws_vpc_cidr                = "10.0.0.0/16"
 aws_router_asn              = "64515"
 aws_create_vpc_endpoints    = true
 num_tunnels                 = 4
-shared_secret               = "this_is_a_very_secure_and_random_string_hehe"
+shared_secret               = "zc0a8hvqWJsdHbLkRLb2cOOLNLuT"
 
 # VM Configuration
 vm_name         = "gcp-vm"

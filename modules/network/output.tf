@@ -20,6 +20,11 @@ output "aws_vpc_id" {
   value = module.vpc.vpc_id
 }
 
+output "aws_private_route_table_ids" {
+  description = "List of IDs of private route tables"
+  value       = module.vpc.private_route_table_ids
+}
+
 output "gcp_network" {
   value = google_compute_network.net.name
 }

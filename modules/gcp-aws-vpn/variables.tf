@@ -34,6 +34,11 @@ variable "aws_private_subnets" {
   type = list(string)
 }
 
+variable "aws_route_table_ids" {
+  type        = list(string)
+  description = "List of AWS route table IDs where routes to GCP should be added"
+}
+
 variable "shared_secret" {
   type = string
 }
