@@ -5,16 +5,16 @@ High-availability VPN network infrastructure connecting Google Cloud Platform an
 ## Architecture
 
 ```
-┌─────────────────────────┐        VPN Tunnels        ┌─────────────────────────┐
+┌─────────────────────────┐        VPN Tunnels       ┌─────────────────────────┐
 │   GCP (Tokyo)           │◄────────────────────────►│   AWS (Singapore)       │
-│   10.10.0.0/16          │    4 IPsec + BGP         │   10.0.0.0/16           │
+│   10.10.0.0/16          │       4 IPsec + BGP      │   10.0.0.0/16           │
 │   ASN: 64514            │                          │   ASN: 64515            │
 └─────────────────────────┘                          └─────────────────────────┘
 ```
 
 **Key Components:**
-- **GCP**: HA VPN Gateway, Cloud Router, Compute Engine VM (10.10.0.2)
-- **AWS**: Transit Gateway, VPN Connections, EC2 Instance (10.0.1.226)
+- **GCP**: HA VPN Gateway, Cloud Router, Cloud NAT Compute Engine VM
+- **AWS**: VPN Site-to-Site, Transit Gateway, VPN Connections, VPC Endpoint, EC2 Instance
 - **VPN**: 4 redundant IPsec tunnels with BGP dynamic routing
 - **Security**: Firewall rules, security groups, encrypted traffic
 
@@ -33,7 +33,7 @@ terraform apply
 |-----------|-----|-----|
 | **Region** | asia-northeast1 (Tokyo) | ap-southeast-1 (Singapore) |
 | **VPC CIDR** | 10.10.0.0/16 | 10.0.0.0/16 |
-| **VPN Gateway** | HA VPN (2 interfaces) | Transit Gateway |
+| **VPN Gateway** | HA VPN (2 interfaces) | VPN Site-to-Site + Transit Gateway |
 | **BGP ASN** | 64514 | 64515 |
 | **VM/Instance** | e2-small (10.10.0.2) | t3.micro (10.0.1.226) |
 | **OS** | Ubuntu 24.04 LTS | Ubuntu 24.04 LTS |
