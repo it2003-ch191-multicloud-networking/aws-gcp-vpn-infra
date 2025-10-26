@@ -48,7 +48,7 @@ resource "aws_vpn_connection" "vpn_conn" {
   tunnel2_preshared_key = var.shared_secret
 
   tags = {
-    Name = "${var.prefix}-vpn-connn"
+    Name = "${var.prefix}-connection"
   }
 }
 
