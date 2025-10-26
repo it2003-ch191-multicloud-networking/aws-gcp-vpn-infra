@@ -8,7 +8,7 @@
 
 | Name           | Source                    | Version |
 | -------------- | ------------------------- | ------- |
-| gcp-aws-ha-vpn | ../modules/gcp-aws-ha-vpn | n/a     |
+| gcp-aws-vpn | ../modules/gcp-aws-vpn | n/a     |
 | network        | ../modules/network        | n/a     |
 
 ## Resources

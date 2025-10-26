@@ -475,7 +475,7 @@ aws ec2 describe-vpn-connections \
 
 **Solution:**
 ```bash
-terraform destroy -target=module.gcp-aws-ha-vpn
+terraform destroy -target=module.gcp-aws-vpn
 terraform apply
 ```
 
@@ -508,8 +508,8 @@ aws ec2 describe-route-tables \
 **If routes are missing:**
 ```bash
 # Re-apply routing module
-terraform destroy -target=module.gcp-aws-ha-vpn.google_compute_route.to_aws
-terraform destroy -target=module.gcp-aws-ha-vpn.aws_route.to_gcp
+terraform destroy -target=module.gcp-aws-vpn.google_compute_route.to_aws
+terraform destroy -target=module.gcp-aws-vpn.aws_route.to_gcp
 terraform apply
 ```
 
@@ -630,7 +630,7 @@ terraform destroy -target=module.vm -target=module.ec2
 
 **Destroy only VPN:**
 ```bash
-terraform destroy -target=module.gcp-aws-ha-vpn
+terraform destroy -target=module.gcp-aws-vpn
 ```
 
 ### Verify Cleanup

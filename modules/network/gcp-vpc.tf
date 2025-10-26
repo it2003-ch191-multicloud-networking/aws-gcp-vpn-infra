@@ -1,7 +1,19 @@
-# Cloud NAT Configuration
-# Allows GCP VMs without external IPs to access the internet
+resource "google_compute_network" "net" {
+  name                    = var.network_name
+  auto_create_subnetworks = false
+  routing_mode            = "GLOBAL"
+}
 
-# Cloud Router for NAT (reuse existing router if available from VPN module)
+resource "google_compute_subnetwork" "subnet" {
+  count = length(var.subnet_regions)
+
+  ip_cidr_range            = cidrsubnets(var.gcp_vpc_cidr, 2, 2)[count.index]
+  name                     = "snet-${count.index}"
+  network                  = google_compute_network.net.name
+  region                   = var.subnet_regions[count.index]
+  private_ip_google_access = true
+}
+
 resource "google_compute_router" "nat_router" {
   count = var.enable_cloud_nat ? 1 : 0
 

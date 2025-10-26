@@ -28,8 +28,8 @@ module "network" {
   cloud_nat_router_asn  = 64520  # Different from VPN router ASN (64514)
 }
 
-module "gcp-aws-ha-vpn" {
-  source = "../modules/gcp-aws-ha-vpn"
+module "gcp-aws-vpn" {
+  source = "../modules/gcp-aws-vpn"
 
   prefix              = "vpn"
   num_tunnels         = var.num_tunnels

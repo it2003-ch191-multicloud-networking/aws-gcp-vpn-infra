@@ -21,17 +21,17 @@ output "aws_private_subnets" {
 # VPN Outputs
 output "transit_gateway_id" {
   description = "AWS Transit Gateway ID"
-  value       = module.gcp-aws-ha-vpn.aws_transit_gateway_id
+  value       = module.gcp-aws-vpn.aws_transit_gateway_id
 }
 
 output "gcp_vpn_gateway_id" {
   description = "GCP HA VPN Gateway ID"
-  value       = module.gcp-aws-ha-vpn.gcp_vpn_gateway_id
+  value       = module.gcp-aws-vpn.gcp_vpn_gateway_id
 }
 
 output "gcp_router_name" {
   description = "GCP Cloud Router name"
-  value       = module.gcp-aws-ha-vpn.gcp_router_name
+  value       = module.gcp-aws-vpn.gcp_router_name
 }
 
 # VM Outputs

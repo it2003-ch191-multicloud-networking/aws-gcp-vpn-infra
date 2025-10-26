@@ -63,11 +63,11 @@ validation {
 }
 ```
 - **4 tunnels** = 2 GCP HA VPN interfaces × 2 AWS customer gateways
-- Each tunnel has BGP session (see `modules/gcp-aws-ha-vpn/gcp.tf` locals)
+- Each tunnel has BGP session (see `modules/gcp-aws-vpn/gcp.tf` locals)
 
 ### 4. Module Dependency Chain
 ```
-network → gcp-aws-ha-vpn → vm/ec2 (parallel)
+network → gcp-aws-vpn → vm/ec2 (parallel)
         ↘ (Cloud NAT created with network)
 ```
 - **Network module** creates both GCP VPC + AWS VPC in single module
@@ -90,7 +90,7 @@ network → gcp-aws-ha-vpn → vm/ec2 (parallel)
 
 ### Module-Specific Patterns
 
-**modules/gcp-aws-ha-vpn/** - Complex BGP tunnel logic:
+**modules/gcp-aws-vpn/** - Complex BGP tunnel logic:
 ```terraform
 # gcp.tf - Auto-calculates interface distribution
 locals {
@@ -196,7 +196,7 @@ gcloud compute ssh gcp-vm --zone=asia-northeast1-a --tunnel-through-iap
 aws ec2-instance-connect ssh --instance-id $(terraform output -raw instance_id) --connection-type eice
 
 # Force VPN recreation (if tunnels stuck)
-terraform destroy -target=module.gcp-aws-ha-vpn
+terraform destroy -target=module.gcp-aws-vpn
 terraform apply
 ```
 

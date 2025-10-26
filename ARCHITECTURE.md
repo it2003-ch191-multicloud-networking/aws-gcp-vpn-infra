@@ -267,7 +267,7 @@ aws-gcp-vpn/
 │   │   ├── variables.tf         # Module variables
 │   │   └── output.tf            # Module outputs
 │   │
-│   └── gcp-aws-ha-vpn/          # VPN module
+│   └── gcp-aws-vpn/          # VPN module
 │       ├── gcp.tf               # HA VPN Gateway
 │       ├── aws.tf               # Transit Gateway + VPN
 │       ├── variables.tf         # Module variables
