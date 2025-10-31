@@ -26,8 +26,5 @@ ec2_key_name         = null  # Set to your AWS key pair name if you want SSH acc
 
 # SSH Keys
 ssh_public_keys = [
-  # Add more keys in format: "username:ssh-rsa AAAA... user@host" for GCP
-  # Or just: "ssh-rsa AAAA... user@host" for AWS-only keys
-  "truongtbn:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHc1s1f6fcKib1MkFW02GJm6QFJvDu8W7VsbXhchoVSC truongtbn",
   "ubuntu:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOCTm0rNBgWsIConnZcQ6+snmfwRgKIJtA38JK+k0ptn shared-key-for-vpn-lab"
 ]
